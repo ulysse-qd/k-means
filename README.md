@@ -14,7 +14,7 @@ Run the command :
     $> coverage run --source=. -m unittest unit_test.py
 
 
-Then run `$> coverage report` to see line coverage.
+Then run `coverage report` to see line coverage.
 
 ***
 
