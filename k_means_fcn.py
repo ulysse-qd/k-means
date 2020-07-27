@@ -20,20 +20,20 @@ def usage(argv):
             print("    pt      Number of points")
             print("    n       Number of dimensions")
             print("    cl      Number of clusters")
-            exit(0)
-    return
+            return 1
+    return 0
 
 def check_error(argv):
     if len(argv) > 4 or len(argv) == 1:
         print("Wrong number of arguments, try \"-h\" for more informations")
-        exit(84)
+        return 1
     if argv[1].isdigit() != True or argv[2].isdigit() != True or argv[3].isdigit() != True:
         print("Arguments have to be numerical characters.")
-        exit(84)
+        return 1
     if int(argv[1]) <= 0 or int(argv[2]) <= 0 or int(argv[3]) <= 0:
         print("Arguments can't be 0 or less.")
-        exit(84)
-    return
+        return 1
+    return 0
 
 def points_and_barycenter_generator(pts, n, cl):
     pts_xyd = np.zeros((pts, n), dtype=int)
@@ -66,15 +66,18 @@ def k_means_algorithm(points, bary, dim):
     return bary
 
 def main(argv):
-    usage(argv)
-    check_error(argv)
+    if usage(argv) != 0:
+        exit(0)
+    if check_error(argv) != 0:
+        exit(84)
     points = int(argv[1])
     dim = int(argv[2])
     clusters = int(argv[3])
     points_coord, bary_coord = points_and_barycenter_generator(points, dim, clusters)
-    for i in range(100):
+    for _ in range(100) :
         bary_coord = k_means_algorithm(points_coord, bary_coord, dim)
     print("New barycenters :\n", bary_coord)
+    return 0
 
 if __name__ == '__main__':
     main(sys.argv)
