@@ -11,9 +11,9 @@ import math as m
 import matplotlib
 import sys
 
-def usage():
-    if len(sys.argv) == 2:
-        if sys.argv[1] == "-h":
+def usage(argv):
+    if len(argv) == 2:
+        if argv[1] == "-h":
             print("USAGE")
             print("    ./k_means_fcn.py pt n cl")
             print("DESCRIPTION")
@@ -23,14 +23,14 @@ def usage():
             exit(0)
     return
 
-def check_error():
-    if len(sys.argv) > 4 or len(sys.argv) == 1:
+def check_error(argv):
+    if len(argv) > 4 or len(argv) == 1:
         print("Wrong number of arguments, try \"-h\" for more informations")
         exit(84)
-    if sys.argv[1].isdigit() != True or sys.argv[2].isdigit() != True or sys.argv[3].isdigit() != True:
+    if argv[1].isdigit() != True or argv[2].isdigit() != True or argv[3].isdigit() != True:
         print("Arguments have to be numerical characters.")
         exit(84)
-    if int(sys.argv[1]) <= 0 or int(sys.argv[2]) <= 0 or int(sys.argv[3]) <= 0:
+    if int(argv[1]) <= 0 or int(argv[2]) <= 0 or int(argv[3]) <= 0:
         print("Arguments can't be 0 or less.")
         exit(84)
     return
@@ -65,13 +65,16 @@ def k_means_algorithm(points, bary, dim):
             bary[i] = np.mean(mean, axis=0)
     return bary
 
-if __name__ == '__main__':
-    usage()
-    check_error()
-    points = int(sys.argv[1])
-    dim = int(sys.argv[2])
-    clusters = int(sys.argv[3])
+def main(argv):
+    usage(argv)
+    check_error(argv)
+    points = int(argv[1])
+    dim = int(argv[2])
+    clusters = int(argv[3])
     points_coord, bary_coord = points_and_barycenter_generator(points, dim, clusters)
     for i in range(100):
         bary_coord = k_means_algorithm(points_coord, bary_coord, dim)
     print("New barycenters :\n", bary_coord)
+
+if __name__ == '__main__':
+    main(sys.argv)
