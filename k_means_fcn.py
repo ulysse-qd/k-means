@@ -10,6 +10,7 @@ import numpy as np
 import math as m
 import matplotlib
 import sys
+import copy
 
 def usage(argv):
     if len(argv) == 2:
@@ -74,8 +75,14 @@ def main(argv):
     dim = int(argv[2])
     clusters = int(argv[3])
     points_coord, bary_coord = points_and_barycenter_generator(points, dim, clusters)
-    for _ in range(100) :
-        bary_coord = k_means_algorithm(points_coord, bary_coord, dim)
+    bary_2 = copy.deepcopy(bary_coord)
+    bary_1 = k_means_algorithm(points_coord, bary_coord, dim)
+    for _ in range(300) :
+        if (bary_2 == bary_1).all() :
+            break
+        else :
+            bary_2 = copy.deepcopy(bary_1)
+            bary_1 = k_means_algorithm(points_coord, bary_coord, dim)
     print("New barycenters :\n", bary_coord)
     return 0
 
