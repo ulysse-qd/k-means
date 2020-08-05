@@ -25,7 +25,7 @@ def usage(argv):
     return 0
 
 def check_error(argv):
-    if len(argv) > 4 or len(argv) == 1:
+    if len(argv) != 4:
         print("Wrong number of arguments, try \"-h\" for more informations")
         return 1
     if argv[1].isdigit() != True or argv[2].isdigit() != True or argv[3].isdigit() != True:
