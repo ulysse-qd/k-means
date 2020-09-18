@@ -7,8 +7,11 @@
 ##
 
 import numpy as np
+import pandas as pds
+import matplotlib.pyplot as plt
 import math as m
 import matplotlib
+import random
 import sys
 import copy
 
@@ -40,6 +43,7 @@ def points_and_barycenter_generator(pts, n, cl):
     pts_xyd = np.zeros((pts, n), dtype=int)
     bcenter = np.zeros((cl, n), dtype=int)
     max_coord = pts * 2
+    np.random.seed(1)
 
     for i in range(len(bcenter)):
         for j in range(n):
@@ -64,7 +68,26 @@ def k_means_algorithm(points, bary, dim):
                 mean = np.append(mean, [points[j]], axis=0)
         if len(mean) != 0:
             bary[i] = np.mean(mean, axis=0)
-    return bary
+    return bary, smallest
+
+def display_graph(clust_df, bary):
+    fig = plt.figure(figsize=(8,8))
+    axe = fig.add_subplot(1, 1, 1)
+    axe.set_xlabel('X', fontsize=15)
+    axe.set_ylabel('Y', fontsize=15)
+    axe.set_title('2D Clustering Representation')
+    clusts = [0, 1, 2]
+    colors = ['r', 'g', 'b']
+    for target, color, in zip(clusts, colors):
+        indicesToKeep = clust_df['cluster'] == target
+        axe.scatter(clust_df.loc[indicesToKeep, 'x'], clust_df.loc[indicesToKeep, 'y'],
+                    c=color, s=50)
+    for i in range(len(bary)):
+        axe.scatter(bary[i][0], bary[i][1], c='black')
+    axe.legend(clusts)
+    axe.grid()
+    plt.show()
+    return
 
 def main(argv):
     if usage(argv) != 0:
@@ -76,14 +99,19 @@ def main(argv):
     clusters = int(argv[3])
     points_coord, bary_coord = points_and_barycenter_generator(points, dim, clusters)
     bary_2 = copy.deepcopy(bary_coord)
-    bary_1 = k_means_algorithm(points_coord, bary_coord, dim)
+    bary_1, pnt_clust = k_means_algorithm(points_coord, bary_coord, dim)
     for _ in range(300) :
         if (bary_2 == bary_1).all() :
             break
         else :
             bary_2 = copy.deepcopy(bary_1)
-            bary_1 = k_means_algorithm(points_coord, bary_coord, dim)
+            bary_1, pnt_clust = k_means_algorithm(points_coord, bary_coord, dim)
     print("New barycenters :\n", bary_coord)
+    clust_df = pds.DataFrame(pnt_clust, columns=['cluster'])
+    points_df = pds.DataFrame(points_coord, columns=['x', 'y'])
+    points_df = pds.concat([points_df, clust_df], axis=1).reindex(points_df.index)
+    display_graph(points_df, bary_1)
+    print(points_df)
     return 0
 
 if __name__ == '__main__':
